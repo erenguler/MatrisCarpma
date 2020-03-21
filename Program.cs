@@ -1,99 +1,103 @@
-﻿using System;
+using System;
 
-namespace MatrisCarpimi
+namespace MatrixMultiplication
 {
     class Program
     {
+        // MATRİS ÇARPIM KURALLARI:
+        // A ve B gibi iki matrisin çarpımlarının tanımlı olabilmesi için; 
+        // A matrisinin sütun sayısının B matrisinin satır sayısına eşit olması gerekir.
+
+        // BİLGİ : [x,y] ve [z,t] boyutlarında iki matrisin çarpım matrisi [x,t] boyutunda olur.
+
         static void Main(string[] args)
         {
-            // MATRİS ÇARPIM KURALLARI :
-            // A ve B gibi iki matrisin çarpımlarının tanımlı olabilmesi için; 
-            // A matrisinin sütun sayısının B matrisinin satır sayısına eşit olması gerekir.
+            Console.ForegroundColor = ConsoleColor.Green;
+            Random random = new Random();
 
-            // BİLGİ : [x,y] ve [z,t] boyutlarında iki matrisin çarpım matrisi [x,t] boyutunda olur.
+        tryAgain:
+            int[,] matrix1 = RandomMatrix(random.Next(1, 10), random.Next(1, 10));
+            int[,] matrix2 = RandomMatrix(random.Next(1, 10), random.Next(1, 10));
 
-            int[,] a = new int[100, 100]; // ilk matris (A)
-            int[,] b = new int[100, 100]; // ikinci matris (B)
-            int[,] c = new int[100, 100]; // ikinci matrisi ters çevirmek için kullanılan ara matris (C)
-            int[,] d = new int[100, 100]; // sonuç(çarpım) matrisi
-            int i, j, x, y, z, t, k;
-            Random rastgele = new Random();
-
-            tekrar:
-            Console.Write("\n1.matrisin satir sayisi:"); x = Convert.ToInt32(Console.ReadLine());
-            Console.Write("\n1.matrisin sütun sayisi:"); y = Convert.ToInt32(Console.ReadLine());
-            Console.Write("\n--------------------------");
-            Console.Write("\n2.matrisin satir sayisi:"); z = Convert.ToInt32(Console.ReadLine());
-            Console.Write("\n2.matrisin sütun sayisi:"); t = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("\n\n");
-
-            if (y != z)
+            // tanımsız matris çarpımı kontrolü
+            if (matrix1.GetLength(1) != matrix2.GetLength(0))
             {
-                Console.WriteLine("\n!!!!!!!!  1.Matrisin Sütun Sayısı İle 2.Matrisin Satır Sayısı Aynı Olmalıdır !!!!!!!!\n\n");
-                goto tekrar;
+                Console.WriteLine("Impossible!");
+                goto tryAgain;
             }
-            else
-            {
-                // A matrisini oluştur(rastgele) ve ekrana yaz
-                for (i = 0; i < x; i++)
-                {
-                    for (j = 0; j < y; j++)
-                    {
-                        a[i, j] = rastgele.Next(1, 10);
-                        Console.Write("{0,5}", a[i, j]);
-                        if (j == y - 1) Console.Write("\n");
-                    }
-                }
-                Console.WriteLine("\n\n");
 
-                // B matrisini oluştur(rastgele) ve ekrana yaz
-                // (B'yi ters çevir C matrisi haline getir)
-                for (i = 0; i < z; i++)
-                {
-                    for (j = 0; j < t; j++)
-                    {
-                        b[i, j] = rastgele.Next(1, 10);
-                        Console.Write("{0,5}", b[i, j]);
-                        if (j == t - 1) Console.Write("\n");
-                        c[j, i] = b[i, j];
-                    }
-                }
-                Console.WriteLine("\n\n");
+            WriteMatrix(matrix1);
+            WriteMatrix(matrix2);
 
-                // C matrisini ekrana yaz
-                // for (i = 0; i < t; i++)                            
-                //     for (j = 0; j < z; j++)
-                //     {
-                //         Console.Write("{0,5}", c[i, j]);
-                //         if (j == z - 1) Console.Write("\n");
-                //     }
-                // Console.WriteLine("\n\n");
-
-                // SONUCU ÖNCE SIFIRLA
-                for (i = 0; i < x; i++)
-                    for (j = 0; j < t; j++)
-                        d[i, j] = 0;
-
-                // ÇARPIM MATRİSİNİ OLUŞTUR(SONUCU)
-                for (i = 0; i < x + z; i++)
-                {
-                    for (k = 0; k < t + y; k++)
-                        for (j = 0; j < t + y; j++)
-                        {
-                            d[i, k] += (a[i, j] * c[k, j]);
-                        }
-                }
-
-                // SONUC MATRİSİNİ EKRANA YAZ
-                for (i = 0; i < x; i++)
-                    for (j = 0; j < t; j++)
-                    {
-                        Console.Write("{0,5}", d[i, j]); ;
-                        if (j == t - 1) Console.Write("\n");
-                    }
-            }
-            Console.ReadLine();
+            int[,] result = MultiplyMatrixes(matrix1, matrix2);
+            WriteMatrix(result);
         }
-    }
 
+        // rastgele sayılar içeren matris oluşturur
+        public static int[,] RandomMatrix(int x, int y)
+        {
+            int[,] array = new int[x, y];
+            Random random = new Random();
+
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                    array[i, j] = random.Next(1, 10);
+
+            return array;
+        }
+
+        // matrisi ekrana yazar
+        public static void WriteMatrix(int[,] matrix)
+        {
+            Console.WriteLine("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+            int x = matrix.GetLength(0);
+            int y = matrix.GetLength(1);
+
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                {
+                    Console.Write("{0,4}", matrix[i, j]);
+                    if (j == y - 1) Console.WriteLine();
+                }
+
+            Console.WriteLine("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        }
+
+        // 2 matrisi çarpar
+        public static int[,] MultiplyMatrixes(int[,] m1, int[,] m2)
+        {
+            int x = m1.GetLength(0); // 1.matris satır sayısı
+            int y = m1.GetLength(1); // 1.matris sutun ve 2.matris satır sayısı
+            int z = m2.GetLength(1); // 2.matris sutun sayisi
+
+            m2 = Turn(m2);
+
+            int[,] result = new int[x, z];
+
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < z; j++)
+                    result[i, j] = 0;
+
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                    for (int k = 0; k < z; k++)
+                        result[i, k] += m1[i, j] * m2[k, j];
+
+            return result;
+        }
+
+        // 2.matrisi yan çevirmek için
+        public static int[,] Turn(int[,] matrix)
+        {
+            int[,] temp = new int[matrix.GetLength(1), matrix.GetLength(0)];
+
+            for (int i = 0; i < matrix.GetLength(0); i++)
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                    temp[j, i] = matrix[i, j];
+
+            return temp;
+        }
+
+    }
 }
