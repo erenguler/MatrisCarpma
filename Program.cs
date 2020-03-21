@@ -2,7 +2,7 @@ using System;
 
 namespace MatrixMultiplication
 {
-    class Program
+   class Program
     {
         // MATRİS ÇARPIM KURALLARI:
         // A ve B gibi iki matrisin çarpımlarının tanımlı olabilmesi için; 
@@ -71,32 +71,18 @@ namespace MatrixMultiplication
             int y = m1.GetLength(1); // 1.matris sutun ve 2.matris satır sayısı
             int z = m2.GetLength(1); // 2.matris sutun sayisi
 
-            m2 = Turn(m2);
-
             int[,] result = new int[x, z];
 
             for (int i = 0; i < x; i++)
                 for (int j = 0; j < z; j++)
+                {
                     result[i, j] = 0;
 
-            for (int i = 0; i < x; i++)
-                for (int j = 0; j < y; j++)
-                    for (int k = 0; k < z; k++)
-                        result[i, k] += m1[i, j] * m2[k, j];
+                    for (int k = 0; k < y; k++)
+                        result[i, j] += m1[i, k] * m2[k, j];
+                }
 
             return result;
-        }
-
-        // 2.matrisi yan çevirmek için
-        public static int[,] Turn(int[,] matrix)
-        {
-            int[,] temp = new int[matrix.GetLength(1), matrix.GetLength(0)];
-
-            for (int i = 0; i < matrix.GetLength(0); i++)
-                for (int j = 0; j < matrix.GetLength(1); j++)
-                    temp[j, i] = matrix[i, j];
-
-            return temp;
         }
 
     }
